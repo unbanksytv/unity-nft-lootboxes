@@ -61,19 +61,12 @@ public class LootBox : MonoBehaviour
     async Task<ERC1155Reward> OpenPack()
     {
         await EnsureCorrectWalletState();
-
-        // Buy the pack first (demo users won't have any packs)
         await BuyPackFromMarketplace();
         Pack packContract = await GetPackContract();
 
-        // Pack sometimes fails due to gas limit, so let's make sure we allow for enough gas.
-        // Then open the pack
+        // Here, 0 is the pack ID, and 1 is the amount of packs to open
         var result = await packContract.Open("0", "1");
-        Debug.Log("Result:");
-        Debug.Log(result.erc1155Rewards[0].ToString());
         openedLootItem = result.erc1155Rewards[0];
-        Debug.Log("Opened Loot Item:");
-        Debug.Log(openedLootItem.ToString());
         return result.erc1155Rewards[0];
     }
 
@@ -122,8 +115,6 @@ public class LootBox : MonoBehaviour
     public void LootReward()
     {
         lootBox.SetActive(false);
-
-        Debug.Log("Token ID: " + openedLootItem.tokenId);
 
         if (openedLootItem.tokenId == "0")
         {
