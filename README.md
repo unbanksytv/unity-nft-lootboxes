@@ -20,14 +20,9 @@ See the [live demo](https://unity-nft-lootboxes.thirdweb-example.com/) or view t
 
 ![Pack Preview](https://blog.thirdweb.com/content/images/2022/11/pack-preview-gif2.gif)
 
-## Using This Template
+### Using This Template
 
-- Install [Blender](https://www.blender.org/download/) and follow our guide to [Setting Up Unity](https://blog.thirdweb.com/guides/get-started-with-thirdwebs-unity-sdk/)
-- Clone this template using the [CLI](https://portal.thirdweb.com/cli):
-
-```bash
-npx thirdweb@latest create --template unity-nft-lootboxes
-```
+Install [Blender](https://www.blender.org/download/) and follow our guide to [Setting Up Unity](https://blog.thirdweb.com/guides/get-started-with-thirdwebs-unity-sdk/)
 
 ## How It Works
 
