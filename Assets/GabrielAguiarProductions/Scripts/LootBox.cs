@@ -72,7 +72,22 @@ public class LootBox : MonoBehaviour
 
     void Start()
     {
-        sdk = new ThirdwebSDK("optimism-goerli");
+        sdk =
+            new ThirdwebSDK("optimism-goerli",
+                new ThirdwebSDK.Options()
+                {
+                    gasless =
+                        new ThirdwebSDK.GaslessOptions()
+                        {
+                            openzeppelin =
+                                new ThirdwebSDK.OZDefenderOptions()
+                                {
+                                    relayerUrl =
+                                        "https://api.defender.openzeppelin.com/autotasks/c2e9a6ca-f2e8-4521-926b-1f9daec2dcb8/runs/webhook/826a5b67-d55d-49dc-8651-5db958ba22b2/DPtceJtayVGgKSDejaFnWk"
+                                }
+                        }
+                });
+
         animator = GetComponent<Animator>();
     }
 
