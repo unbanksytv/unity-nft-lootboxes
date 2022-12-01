@@ -12,7 +12,9 @@ public class LootBox : MonoBehaviour
 
     public GameObject lootBoxFractured;
 
-    public GameObject[] possibleLootRewardPrefabs;
+    public GameObject redGem;
+
+    public GameObject purpleGem;
 
     private GameObject fracturedObject;
 
@@ -27,6 +29,8 @@ public class LootBox : MonoBehaviour
     private ThirdwebSDK sdk;
 
     private ERC1155Reward openedLootItem;
+
+    public GameObject helperText;
 
     async Task<Pack> GetPackContract()
     {
@@ -65,7 +69,11 @@ public class LootBox : MonoBehaviour
         // Pack sometimes fails due to gas limit, so let's make sure we allow for enough gas.
         // Then open the pack
         var result = await packContract.Open("0", "1");
+        Debug.Log("Result:");
+        Debug.Log(result.erc1155Rewards[0].ToString());
         openedLootItem = result.erc1155Rewards[0];
+        Debug.Log("Opened Loot Item:");
+        Debug.Log(openedLootItem.ToString());
         return result.erc1155Rewards[0];
     }
 
@@ -113,17 +121,31 @@ public class LootBox : MonoBehaviour
     //called via animation
     public void LootReward()
     {
-        loot =
-            Instantiate(possibleLootRewardPrefabs[// parse int
-            int.Parse(openedLootItem.tokenId)]) as
-            GameObject;
-
         lootBox.SetActive(false);
+
+        Debug.Log("Token ID: " + openedLootItem.tokenId);
+
+        if (openedLootItem.tokenId == "0")
+        {
+            loot = Instantiate(redGem);
+            UpdateHelperText("You opened a COMMON red gem. Click the restart icon to play again.");
+        }
+
+        if (openedLootItem.tokenId == "1")
+        {
+            loot = Instantiate(purpleGem);
+            UpdateHelperText("You opened a RARE purple gem! Click the restart icon to play again.");
+        }
 
         if (lootBoxFractured != null)
         {
             fracturedObject = Instantiate(lootBoxFractured) as GameObject;
         }
+    }
+
+    private void UpdateHelperText(string text)
+    {
+        helperText.GetComponent<TMPro.TextMeshProUGUI>().text = text;
     }
 
     public void Restart()

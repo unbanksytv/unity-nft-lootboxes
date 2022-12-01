@@ -319,7 +319,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 433048714}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -663,8 +663,8 @@ RectTransform:
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 100017802}
   - {fileID: 914351794}
+  - {fileID: 100017802}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -801,7 +801,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 433048714}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
@@ -891,7 +891,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: -738.00494, y: 0, z: -734.64716, w: 0}
+  m_margin: {x: -876.9126, y: 0, z: -1022.1687, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -1946,9 +1946,21 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8906056561873470178, guid: d726a8ae641422d4893f8f067d531c5c,
         type: 3}
+      propertyPath: redGem
+      value: 
+      objectReference: {fileID: 3238686050191573881, guid: 35167a100c8e121499156d1f087710af,
+        type: 3}
+    - target: {fileID: 8906056561873470178, guid: d726a8ae641422d4893f8f067d531c5c,
+        type: 3}
       propertyPath: lootbox
       value: 
       objectReference: {fileID: 8176976920540763224}
+    - target: {fileID: 8906056561873470178, guid: d726a8ae641422d4893f8f067d531c5c,
+        type: 3}
+      propertyPath: purpleGem
+      value: 
+      objectReference: {fileID: 3238686050191573881, guid: 6c0e6704c14a7cd4399684ca7778edc3,
+        type: 3}
     - target: {fileID: 8906056561873470178, guid: d726a8ae641422d4893f8f067d531c5c,
         type: 3}
       propertyPath: helperText
