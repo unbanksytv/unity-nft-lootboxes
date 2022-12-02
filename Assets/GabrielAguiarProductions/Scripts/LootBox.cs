@@ -42,8 +42,14 @@ public class LootBox : MonoBehaviour
 
     async Task<string> EnsureCorrectWalletState()
     {
-        string address = await sdk.wallet.Connect();
-        await sdk.wallet.SwitchNetwork(420);
+        string address =
+            await sdk
+                .wallet
+                .Connect(new WalletConnection()
+                {
+                    provider = WalletProvider.CoinbaseWallet, // Use Coinbase Wallet
+                    chainId = 420 // Switch the wallet Goerli network on connection
+                });
         return address;
     }
 
