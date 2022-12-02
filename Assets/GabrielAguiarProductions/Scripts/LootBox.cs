@@ -78,6 +78,7 @@ public class LootBox : MonoBehaviour
 
     void Start()
     {
+        // Instantiate the SDK with Gasless Transactions
         sdk =
             new ThirdwebSDK("optimism-goerli",
                 new ThirdwebSDK.Options()
