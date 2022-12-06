@@ -32,6 +32,8 @@ public class LootBox : MonoBehaviour
 
     public GameObject helperText;
 
+    public bool triggerToggle;
+
     async Task<Pack> GetPackContract()
     {
         await EnsureCorrectWalletState();
@@ -56,11 +58,18 @@ public class LootBox : MonoBehaviour
     async Task<TransactionResult> BuyPackFromMarketplace()
     {
         await EnsureCorrectWalletState();
+
+        UpdateHelperText("Purchasing pack from marketplace...");
+
         Marketplace marketplace =
             sdk
                 .GetContract("0x8ecE57a92ea312D5f31E39E5F6f3E6fC02507D7B")
                 .marketplace;
+
         var result = await marketplace.BuyListing("0", 1);
+
+        UpdateHelperText("Purchase complete! Opening pack now...");
+
         return result;
     }
 
@@ -112,9 +121,12 @@ public class LootBox : MonoBehaviour
                 cameraAnimator.SetBool("Idle", false);
                 cameraAnimator.SetBool("Hover", true);
 
-                if (Input.GetMouseButtonDown(0))
+                if (Input.GetMouseButtonDown(0) && !triggerToggle)
                 {
+                    cameraAnimator.SetBool("Hover", true);
+                    triggerToggle = true;
                     var openedPack = await OpenPack();
+                    triggerToggle = false;
                     if (openedLootItem != null)
                     {
                         animator.SetBool("Open", true);
