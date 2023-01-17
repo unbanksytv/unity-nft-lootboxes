@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Thirdweb;
 using UnityEngine;
 
-[RequireComponent(typeof (Collider))]
+[RequireComponent(typeof(Collider))]
 public class LootBox : MonoBehaviour
 {
     public Animator cameraAnimator;
@@ -34,77 +34,66 @@ public class LootBox : MonoBehaviour
 
     public bool triggerToggle;
 
-    async Task<Pack> GetPackContract()
+    void Start()
     {
-        await EnsureCorrectWalletState();
+        // Instantiate the SDK
+        sdk = new ThirdwebSDK("optimism-goerli");
+        animator = GetComponent<Animator>();
+    }
+
+    async Task<string> ConnectWallet()
+    {
+        // Connect to the wallet (any browser extension) with a given chain Id
+        return await sdk.wallet.Connect(new WalletConnection()
+        {
+            provider = WalletProvider.Injected,
+            chainId = 420
+        });
+    }
+
+    Pack GetPackContract()
+    {
         return sdk
             .GetContract("0xd8Bd34726814855fB9cFF58fe5372558e3B411Cb")
             .pack;
     }
 
-    async Task<string> EnsureCorrectWalletState()
+    Marketplace GetMarketplaceContract()
     {
-        string address =
-            await sdk
-                .wallet
-                .Connect(new WalletConnection()
-                {
-                    provider = WalletProvider.CoinbaseWallet, // Use Coinbase Wallet
-                    chainId = 420 // Switch the wallet Goerli network on connection
-                });
-        return address;
-    }
-
-    async Task<TransactionResult> BuyPackFromMarketplace()
-    {
-        await EnsureCorrectWalletState();
-
-        UpdateHelperText("Purchasing pack from marketplace...");
-
-        Marketplace marketplace =
-            sdk
+        return sdk
                 .GetContract("0x8ecE57a92ea312D5f31E39E5F6f3E6fC02507D7B")
                 .marketplace;
-
-        var result = await marketplace.BuyListing("0", 1);
-
-        UpdateHelperText("Purchase complete! Opening pack now...");
-
-        return result;
     }
 
-    async Task<ERC1155Reward> OpenPack()
+    async Task BuyPackFromMarketplace()
     {
-        await EnsureCorrectWalletState();
-        await BuyPackFromMarketplace();
-        Pack packContract = await GetPackContract();
+        UpdateHelperText("Purchasing pack from marketplace...");
+        Marketplace marketplace = GetMarketplaceContract();
+        await marketplace.BuyListing("0", 1);
+        UpdateHelperText("Purchase complete! Opening pack now...");
+    }
 
+    async Task OpenPack()
+    {
+        Pack packContract = GetPackContract();
         // Here, 0 is the pack ID, and 1 is the amount of packs to open
         var result = await packContract.Open("0", "1");
+        // The first item in the array is the ERC1155 NFT that was obtained
         openedLootItem = result.erc1155Rewards[0];
-        return result.erc1155Rewards[0];
     }
 
-    void Start()
+    async Task BuyAndOpenPack()
     {
-        // Instantiate the SDK with Gasless Transactions
-        sdk =
-            new ThirdwebSDK("optimism-goerli",
-                new ThirdwebSDK.Options()
-                {
-                    gasless =
-                        new ThirdwebSDK.GaslessOptions()
-                        {
-                            openzeppelin =
-                                new ThirdwebSDK.OZDefenderOptions()
-                                {
-                                    relayerUrl =
-                                        "https://api.defender.openzeppelin.com/autotasks/c2e9a6ca-f2e8-4521-926b-1f9daec2dcb8/runs/webhook/826a5b67-d55d-49dc-8651-5db958ba22b2/DPtceJtayVGgKSDejaFnWk"
-                                }
-                        }
-                });
-
-        animator = GetComponent<Animator>();
+        try
+        {
+            await ConnectWallet();
+            await BuyPackFromMarketplace();
+            await OpenPack();
+        }
+        catch (System.Exception error)
+        {
+            UpdateHelperText("Error opening pack: " + error.Message);
+        }
     }
 
     async void Update()
@@ -125,7 +114,7 @@ public class LootBox : MonoBehaviour
                 {
                     cameraAnimator.SetBool("Hover", true);
                     triggerToggle = true;
-                    var openedPack = await OpenPack();
+                    await BuyAndOpenPack();
                     triggerToggle = false;
                     if (openedLootItem != null)
                     {
@@ -136,11 +125,14 @@ public class LootBox : MonoBehaviour
             }
             else
             {
-                animator.SetBool("Idle", true);
-                animator.SetBool("Hover", false);
+                if (!triggerToggle)
+                {
+                    animator.SetBool("Idle", true);
+                    animator.SetBool("Hover", false);
 
-                cameraAnimator.SetBool("Idle", true);
-                cameraAnimator.SetBool("Hover", false);
+                    cameraAnimator.SetBool("Idle", true);
+                    cameraAnimator.SetBool("Hover", false);
+                }
             }
         }
     }
@@ -185,16 +177,36 @@ public class LootBox : MonoBehaviour
         cameraAnimator.SetBool("Open", false);
         cameraAnimator.SetBool("Hover", false);
 
-        Destroy (loot);
-        Destroy (fracturedObject);
+        Destroy(loot);
+        Destroy(fracturedObject);
 
         lootBox.SetActive(true);
 
         openedLootItem = null;
+
+        UpdateHelperText("Click the lootbox to buy and open another pack!");
     }
 
     IEnumerator RestartCo()
     {
         yield return new WaitForFixedUpdate();
     }
+
+    /**
+    Gasless
+    new ThirdwebSDK.Options()
+                {
+                    gasless =
+                        new ThirdwebSDK.GaslessOptions()
+                        {
+                            openzeppelin =
+                                new ThirdwebSDK.OZDefenderOptions()
+                                {
+                                    relayerUrl =
+                                        "https://api.defender.openzeppelin.com/autotasks/c2e9a6ca-f2e8-4521-926b-1f9daec2dcb8/runs/webhook/826a5b67-d55d-49dc-8651-5db958ba22b2/DPtceJtayVGgKSDejaFnWk"
+                                }
+                        }
+                }
+
+    **/
 }
